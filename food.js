@@ -1,7 +1,10 @@
 class Food {
-    constructor(){
+    constructor(fedTime,lastFed){
         //preloads the image of milk
         this.image = loadImage("images/Milk.png");
+
+       
+        
     }
 
     display(){

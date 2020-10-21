@@ -10,6 +10,8 @@ var foodStock, foodS;
 //creates the variables for the dog images
 var dogImg, happyDogImg;
 
+var lastFed;
+
 function preload(){
   //loads the dog images
   dogImg = loadAnimation("images/dogImg.png");
@@ -24,7 +26,7 @@ function setup() {
 
   //assigns firebase database to the variable database
   database = firebase.database();
-  food=new Food();
+  foodObj=new Food();
   //fetches food from database
   foodStock = database.ref("Food");
   foodStock.on("value",readStock);
@@ -34,21 +36,46 @@ function setup() {
   dog.addAnimation("dogImg",dogImg);
   dog.addAnimation("happyDogImg",happyDogImg);
   dog.scale = 0.2;
+
+   //creates the buttons
+   feed = createButton("Feed the dog");
+   feed.position(600,95);
+   feed.mousePressed(feedDog);
   
+   addFood = createButton("Add Food");
+   addFood.position(700,95);
+   addFood.mousePressed(addFoods);
 }
 
 
 function draw() {  
   background(46,139,87);
-  food.display();
+  foodObj.display();
   fill(0);
   text("Press the UP ARROW to feed the dog!",150,100);
   text("Remaining food:"+foodS,150,150);
 
-  //feeds the dog 
+  //reads last fed time
+  fedTime = database.ref("FeedTime");
+  fedTime.on("value",function(data){
+    lastFed = data.val();
+  });
   
   drawSprites();
   //add styles here
+
+  //to show last feed time
+  fill(255,255,254);
+  textSize(15);
+  if(lastFed>=12){
+    text("Last Feed:"+lastFed%12+ "PM",350,30);
+  }else if (lastFed===0){
+    text("Last Feed: 12 AM", 350,30);
+  }else {
+    text("Last feed:"+lastFed+ "AM",350,30);
+  }
+
+  
 
 }
 
@@ -63,15 +90,28 @@ function writeStock(x){
     Food:x
   })
 }
-function keyPressed(){
-  if(keyCode=== UP_ARROW){
-    dog.changeAnimation("happyDogImg",happyDogImg);
-    if(foodS > 0){
-      foodS = foodS - 1;
-    }
-    writeStock(foodS);
-    
-  }
+
+
+function feedDog(){
+ foodS = foodS - 1;
+ dog.changeAnimation("happyDogImg",happyDogImg);
 }
+
+function addFoods(){
+  foodS++;
+  database.ref("/").update({
+    Food: foodS
+  })
+}
+
+
+async function hour(){
+    var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
+    var responseJSON = await response.json();
+}
+
+
+
+
 
 
