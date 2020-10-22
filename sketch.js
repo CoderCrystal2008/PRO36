@@ -10,12 +10,31 @@ var foodStock, foodS;
 //creates the variables for the dog images
 var dogImg, happyDogImg;
 
+//creates the last fed variable
 var lastFed;
+
+//creates the changingGameState and readingGameState variables
+var changingGameState, readingGameState;
+
+//creates the image variables
+var bedroomImg, gardenImg, washroomImg;
 
 function preload(){
   //loads the dog images
   dogImg = loadAnimation("images/dogImg.png");
   happyDogImg = loadAnimation("images/dogImg1.png");
+
+  //loads the bedroom image
+  bedroomImg = loadImage("virtualPetImages/BedRoom.png")
+
+  //loads the garden image
+  gardenImg = loadImage("virtualPetImages/Garden.png");
+
+  //loads the washroom image
+  washroomImg = loadImage("virtualPetImages/WashRoom.png");
+
+  //loads the dead dog image
+  sadDog = loadImage("virtualPetImages/deadDog.png");
 }
 
 	
@@ -42,9 +61,15 @@ function setup() {
    feed.position(600,95);
    feed.mousePressed(feedDog);
   
-   addFood = createButton("Add Food");
-   addFood.position(700,95);
-   addFood.mousePressed(addFoods);
+   addFoods = createButton("Add more Food");
+   addFoods.position(700,95);
+   addFoods.mousePressed(addFoods);
+
+   //reads the game state from the database
+   readingGameState = database.ref("gameState");
+   readingGameState.on("value",function(data){
+     gameState = data.val();
+   });
 }
 
 
@@ -75,7 +100,34 @@ function draw() {
     text("Last feed:"+lastFed+ "AM",350,30);
   }
 
-  
+  //shows the game states
+  /*currentTime = hour();
+  if(currentTime === (lastFed+1)){
+    update("Playing");
+    food.garden();
+  } else if(currentTime === (lastFed+2)){
+    update("Sleeping");
+    food.bedroom();
+  } else if(currentTime>(lastFed+2)&& currentTime<=(lastFEd+4)){
+    update("Bathing");
+    food.washroom();
+  }else{
+    update("Hungry");
+    foodObj.display();
+  }*/
+
+  //checks whether the game state is "Hungry" or not
+  /*if(gameState !== "Hungry"){
+    feed.hide();
+    addFoodss.hide();
+    dog.remove();
+  }else{
+    feed.show();
+    addFoodss.show();
+    dog.addImage(sadDog);
+  }
+
+  lastFed = 0;*/
 
 }
 
@@ -95,6 +147,7 @@ function writeStock(x){
 function feedDog(){
  foodS = foodS - 1;
  dog.changeAnimation("happyDogImg",happyDogImg);
+ //foodObj.x = 240;
 }
 
 function addFoods(){
@@ -109,6 +162,12 @@ async function hour(){
     var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
     var responseJSON = await response.json();
 }
+
+/*function update(state){
+  database.ref("/").update({
+    gameState : state
+  })
+}*/
 
 
 
