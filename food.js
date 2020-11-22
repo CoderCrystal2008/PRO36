@@ -1,10 +1,7 @@
 class Food {
     constructor(fedTime,lastFed){
         //preloads the image of milk
-        this.image = loadImage("images/Milk.png");
-
-       
-        
+        this.image = loadImage("images/Milk.png");        
     }
 
     display(){
@@ -31,11 +28,12 @@ class Food {
             foodS = data.val();
         })
     }
-    /*updateFoodStock(){
+
+    updateFoodStock(){
         database.ref("/").update({
-            Food:
+            Food:food 
         }) 
-    }*/
+    }
 
     deductFood(){
         database.ref("/").update({
